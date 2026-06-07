@@ -1,0 +1,34 @@
+# See the default config file for all rules
+# https://github.com/detekt/detekt/blob/main/detekt-core/src/main/resources/default-detekt-config.yml
+
+
+complexity:
+  active: true
+  LongMethod:
+    active: true
+    threshold: 70
+
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+  PrintStackTrace:
+    active: false
+  InstanceOfCheckForException:
+    active: false
+
+formatting:
+  NoWildcardImports:
+    active: false
+
+style:
+  WildcardImport:
+    active: false
+  MagicNumber:
+    active: true
+    excludes: [ '**/theme/**' ]
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']
