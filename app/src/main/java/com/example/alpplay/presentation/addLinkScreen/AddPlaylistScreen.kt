@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,11 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.example.alpplay.presentation.addLinkScreen.components.CustomTextField
 import com.example.alpplay.presentation.addLinkScreen.components.CustomTextFieldState
+import com.example.alpplay.presentation.addLinkScreen.viewModel.AddPlayListState
+import com.example.alpplay.presentation.addLinkScreen.viewModel.AddPlayListViewModel
 import com.example.alpplay.ui.theme.BusinessNavy
 import com.example.alpplay.ui.theme.Crimson
 import com.example.alpplay.ui.theme.Emerald
@@ -40,9 +44,9 @@ import com.example.alpplay.ui.theme.TitleText
 @Composable
 fun AddLinkScreen(
     modifier: Modifier = Modifier,
-    events: AddPlaylistScreenUIEvents,
-    state: AddPlaylistScreenUIState
+    viewModel: AddPlayListViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,8 +73,16 @@ fun AddLinkScreen(
         )
 
         ListDetailsInput(
-            events = events,
-            state = state
+            events = AddPlaylistScreenUIEvents(
+                onPlayListNameChange = viewModel::onPlayListNameChange,
+                onM3UUrlChange = viewModel::m3uUrlChange,
+                onCancelClicked = viewModel::onCancelClicked,
+                onAddClicked = { /*TODO*/ }
+            ),
+            state = AddPlayListState(
+                playListName = state.playListName,
+                m3uUrl = state.m3uUrl
+            )
         )
     }
 }
@@ -78,7 +90,7 @@ fun AddLinkScreen(
 @Composable
 fun ListDetailsInput(
     modifier: Modifier = Modifier,
-    state: AddPlaylistScreenUIState,
+    state: AddPlayListState,
     events: AddPlaylistScreenUIEvents
 ) {
     Column(
