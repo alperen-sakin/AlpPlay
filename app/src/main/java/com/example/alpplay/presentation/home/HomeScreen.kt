@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.tv.material3.Icon
 import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.NavigationDrawerItem
@@ -35,7 +36,8 @@ import com.example.alpplay.ui.theme.Mirage
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
     val state by viewModel.state.collectAsState()
@@ -92,7 +94,11 @@ fun HomeScreen(
                     0 -> ChannelDashboard(
                         state = state,
                         onCategoryFocused = {category -> viewModel.onCategorySelected(category)},
-                        onChannelClick = {}
+                        onChannelClick = {streamUrl ->
+                            val encodeUrl = java.net.URLEncoder.encode(streamUrl, "UTF-8")
+
+                            navController.navigate("player/$encodeUrl")
+                        }
 
                     )
                     1 -> Text(text = "Movies", color = Color.White)
@@ -107,9 +113,3 @@ fun HomeScreen(
 
 }
 
-
-@Preview(device = "id:tv_1080p")
-@Composable
-private fun adam() {
-    HomeScreen()
-}

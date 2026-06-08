@@ -35,9 +35,11 @@ class PlaylistRepositoryImpl @Inject constructor(
         return try {
             val playlistId = playlistDao.insertPlaylist(playlist.toEntity()).toInt()
 
-            val rawData = api.getM3uFile(playlist.url)
+            val response = api.getM3uFile(playlist.url)
 
-            val parsedChannels = M3uParser.parse(rawData)
+            val parsedChannels = response.byteStream().use { inputStream ->
+                M3uParser.parse(inputStream)
+            }
 
             val channelEntities = parsedChannels.map { it.toEntity(playlistId) }
             channelDao.insertChannels(channelEntities)

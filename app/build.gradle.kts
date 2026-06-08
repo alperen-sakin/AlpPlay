@@ -59,10 +59,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.androidx.compose.material.icons.extended)
 
-    // ExoPlayer (Media3)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.exoplayer.hls)
-    implementation(libs.androidx.media3.ui)
+
 
     // Dagger-Hilt
     implementation(libs.hilt.android)
@@ -83,6 +80,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    implementation("org.videolan.android:libvlc-all:3.7.2")
 
 }
 detekt {

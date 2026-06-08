@@ -1,42 +1,52 @@
 package com.example.alpplay.domain.utils
 
 import com.example.alpplay.domain.model.Channel
+import java.io.InputStream
 
 object M3uParser {
-    fun parse(rawM3uData: String): List<Channel> {
+
+    fun parse(inputStream: InputStream): List<Channel> {
         val channels = mutableListOf<Channel>()
-        val lines = rawM3uData.lines()
 
-        var currentName = ""
-        var currentLogo = ""
-        var currentCategory = "Other"
+        var currentTitle: String = "Unknow"
+        var currentCategory: String = "Other"
+        var currentLogo: String = ""
 
-        for (line in lines) {
-            val trimmedLine = line.trim()
+        inputStream.bufferedReader().useLines { lines ->
+            lines.forEach { line ->
+                val trimmedLine = line.trim()
 
-            if (trimmedLine.startsWith("#EXTINF:")) {
-                val logoMatch = "tvg-logo=\"([^\"]+)\"".toRegex().find(trimmedLine)
-                currentLogo = logoMatch?.groups?.get(1)?.value ?: ""
-
-
-                val groupMatch = "group-title=\"([^\"]+)\"".toRegex().find(trimmedLine)
-                currentCategory = groupMatch?.groups?.get(1)?.value ?: "Other"
-
-
-                currentName = trimmedLine.substringAfterLast(",").trim()
-
-            } else if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#")) {
-
-                channels.add(
-                    Channel(
-                        name = currentName,
-                        logoUrl = currentLogo,
-                        category = currentCategory,
-                        streamUrl = trimmedLine
+                if (trimmedLine.startsWith("#EXTINF")) {
+                    currentTitle = extractTitle(trimmedLine)
+                    currentCategory = extractCategory(trimmedLine)
+                    currentLogo = extractLogo(trimmedLine)
+                } else if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#")) {
+                    channels.add(
+                        Channel(
+                            name = currentTitle,
+                            category = currentCategory,
+                            logoUrl = currentLogo,
+                            streamUrl = trimmedLine
+                        )
                     )
-                )
+                }
             }
         }
         return channels
+    }
+
+    private fun extractTitle(line: String): String {
+        return line.substringAfterLast(",", "Unknow channel").trim()
+    }
+
+    private fun extractCategory(line: String): String {
+
+        val category = Regex("group-title=\"(.*?)\"").find(line)?.groupValues?.get(1)
+        return category ?: "Other"
+    }
+
+    private fun extractLogo(line: String): String {
+
+        return Regex("tvg-logo=\"(.*?)\"").find(line)?.groupValues?.get(1) ?: ""
     }
 }
