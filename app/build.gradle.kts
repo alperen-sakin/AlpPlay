@@ -74,6 +74,7 @@ dependencies {
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.scalars)
+    implementation(libs.okhttp)
 
     implementation(libs.coil.compose)
 

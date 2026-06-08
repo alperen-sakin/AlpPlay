@@ -10,4 +10,6 @@ interface PlaylistRepository {
     fun getAllPlaylists(): Flow<List<Playlist>>
 
     suspend fun hesAnyPlaylist(): Boolean
+
+    suspend fun addPlaylistAndFetchChannels(playlist: Playlist): Result<Unit>
 }

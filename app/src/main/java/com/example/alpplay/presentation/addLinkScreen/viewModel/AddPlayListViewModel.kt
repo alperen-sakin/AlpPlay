@@ -45,15 +45,20 @@ class AddPlayListViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(onSuccess: () -> Unit) {
+    fun onAddClicked(onSuccess: () -> Unit, onError: (String) -> Unit) {
         val currentName = state.value.playListName
         val currentUrl = state.value.m3uUrl
 
         if (currentName.isNotBlank() && currentUrl.isNotBlank()) {
             viewModelScope.launch {
                 val newPlaylist = Playlist(name = currentName, url = currentUrl)
-                repository.addPlaylist(newPlaylist)
-                onSuccess()
+                val result = repository.addPlaylistAndFetchChannels(newPlaylist)
+
+                result.onSuccess {
+                    onSuccess()
+                }.onFailure { error ->
+                    onError(error.localizedMessage ?: "Unknown error")
+                }
             }
         }
     }

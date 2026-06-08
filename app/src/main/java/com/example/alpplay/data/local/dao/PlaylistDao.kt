@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlaylist(playlist: PlayListEntity)
+    suspend fun insertPlaylist(playlist: PlayListEntity):Long
 
     @Query("SELECT * FROM playlists ORDER BY addedAt DESC")
     fun getAllPlaylists(): Flow<List<PlayListEntity>>

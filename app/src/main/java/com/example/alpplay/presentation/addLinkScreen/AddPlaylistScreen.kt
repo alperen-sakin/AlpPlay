@@ -1,5 +1,6 @@
 package com.example.alpplay.presentation.addLinkScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ fun AddLinkScreen(
     viewModel: AddPlayListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -82,7 +85,11 @@ fun AddLinkScreen(
                 onCancelClicked = viewModel::onCancelClicked,
                 onAddClicked = { viewModel.onAddClicked(onSuccess = {
                     navController.navigate("main")
-                }) }
+                },
+                    onError = {error ->
+                        Toast.makeText(context, "Hata: $error", Toast.LENGTH_LONG).show()
+
+                    })}
             ),
             state = AddPlayListState(
                 playListName = state.playListName,
