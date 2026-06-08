@@ -14,9 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Text
 import com.example.alpplay.domain.model.ChannelStorage
-import com.example.alpplay.presentation.playerScreen.PlayerScreen
 import com.example.alpplay.presentation.addLinkScreen.AddLinkScreen
 import com.example.alpplay.presentation.home.HomeScreen
+import com.example.alpplay.presentation.playerScreen.PlayerScreen
 import com.example.alpplay.ui.theme.Mirage
 import com.example.alpplay.ui.theme.TitleText
 
@@ -53,7 +53,6 @@ fun AppNavigation(
                 composable("player") {
                     val channel = ChannelStorage.selectedChannel
 
-
                     if (
                         channel != null
                     ) {
@@ -62,11 +61,10 @@ fun AppNavigation(
                             channelName = channel.name,
                             channelCategory = channel.category,
                             onNextChannel = {},
-                            onPreviousChannel = {}
+                            onPreviousChannel = {},
+                            channels = ChannelStorage.channelsList
                         )
                     }
-
-
                 }
             }
         }

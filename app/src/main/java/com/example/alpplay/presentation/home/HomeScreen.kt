@@ -30,7 +30,6 @@ import com.example.alpplay.presentation.home.sections.ChannelDashboard
 import com.example.alpplay.presentation.home.viewModel.HomeViewModel
 import com.example.alpplay.ui.theme.Emerald
 import com.example.alpplay.ui.theme.Mirage
-import kotlin.io.encoding.Base64
 
 private const val ALPHA0_05F = 0.05f
 private const val ALPHA0_1F = 0.1f
@@ -85,7 +84,7 @@ fun HomeScreen(
                             Text(
                                 text = item.first,
 
-                                )
+                            )
                         }
                     }
                 }
@@ -102,6 +101,7 @@ fun HomeScreen(
                         onCategoryFocused = { category -> viewModel.onCategorySelected(category) },
                         onChannelClick = { channel ->
                             ChannelStorage.selectedChannel = channel
+                            ChannelStorage.channelsList = state.channels
                             navController.navigate("player")
                         }
 
