@@ -48,7 +48,7 @@ fun ChannelDashboard(
     modifier: Modifier = Modifier,
     state: HomeState,
     onCategoryFocused: (String) -> Unit,
-    onChannelClick: (String) -> Unit,
+    onChannelClick: (Channel) -> Unit,
 ) {
     var activeCategoryIndex by remember { mutableIntStateOf(0) }
     var isGridFocused by remember { mutableStateOf(false) }
@@ -127,11 +127,11 @@ private const val RATIO = 16f / 9f
 
 @Composable
 private fun ChannelCard(
-    onChannelClick: (String) -> Unit,
+    onChannelClick: (Channel) -> Unit,
     channel: Channel
 ) {
     Card(
-        onClick = { onChannelClick(channel.streamUrl) },
+        onClick = { onChannelClick(channel) },
         modifier = Modifier
             .aspectRatio(RATIO)
             .border(

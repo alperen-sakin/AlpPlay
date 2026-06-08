@@ -24,11 +24,13 @@ import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.NavigationDrawerItem
 import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
+import com.example.alpplay.domain.model.ChannelStorage
 import com.example.alpplay.presentation.home.constant.MenuItems
 import com.example.alpplay.presentation.home.sections.ChannelDashboard
 import com.example.alpplay.presentation.home.viewModel.HomeViewModel
 import com.example.alpplay.ui.theme.Emerald
 import com.example.alpplay.ui.theme.Mirage
+import kotlin.io.encoding.Base64
 
 private const val ALPHA0_05F = 0.05f
 private const val ALPHA0_1F = 0.1f
@@ -83,7 +85,7 @@ fun HomeScreen(
                             Text(
                                 text = item.first,
 
-                            )
+                                )
                         }
                     }
                 }
@@ -98,13 +100,13 @@ fun HomeScreen(
                     TV_SECTION -> ChannelDashboard(
                         state = state,
                         onCategoryFocused = { category -> viewModel.onCategorySelected(category) },
-                        onChannelClick = { streamUrl ->
-                            val encodeUrl = java.net.URLEncoder.encode(streamUrl, "UTF-8")
-
-                            navController.navigate("player/$encodeUrl")
+                        onChannelClick = { channel ->
+                            ChannelStorage.selectedChannel = channel
+                            navController.navigate("player")
                         }
 
                     )
+
                     MOVIE_SECTION -> Text(text = "Movies", color = Color.White)
                     SERIES_SECTION -> Text(text = "Series", color = Color.White)
                     SETTINGS_SECTION -> Text(text = "Settings", color = Color.White)
