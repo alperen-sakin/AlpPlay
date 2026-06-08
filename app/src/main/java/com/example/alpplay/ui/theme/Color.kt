@@ -19,3 +19,9 @@ val Selena = Color(0xff908FA0)
 val BusinessNavy = Color(0xff2D3449)
 val Emerald = Color(0xff2cc9a8)
 val Crimson = Color(0xffef4444)
+
+//yeni renkler
+val ChosenBlue = Color(0xff0d1e35)
+val Turquoise = Color(0xff2DD4BF)
+val Darlington = Color(0xff64748B)
+val UniformBlue = Color(0xFF11293c)

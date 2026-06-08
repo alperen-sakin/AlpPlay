@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,16 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.tv.material3.Icon
 import androidx.tv.material3.NavigationDrawer
-import androidx.tv.material3.NavigationDrawerItem
-import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
 import com.example.alpplay.domain.model.ChannelStorage
+import com.example.alpplay.presentation.home.component.NavItem
 import com.example.alpplay.presentation.home.constant.MenuItems
-import com.example.alpplay.presentation.home.sections.ChannelDashboard
+import com.example.alpplay.presentation.home.sections.channelDashboard.ChannelDashboard
 import com.example.alpplay.presentation.home.viewModel.HomeViewModel
-import com.example.alpplay.ui.theme.Emerald
+import com.example.alpplay.ui.theme.ChosenBlue
 import com.example.alpplay.ui.theme.Mirage
 
 private const val ALPHA0_05F = 0.05f
@@ -58,34 +57,22 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .background(Color.Black.copy(alpha = ALPHA0_05F))
-                        .padding(vertical = 32.dp, horizontal = 12.dp),
+                        .width(90.dp)
+                        .background(ChosenBlue)
+                        .padding(vertical = 16.dp, horizontal = 8.dp),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
                 ) {
+
+
                     MenuItems.forEachIndexed { index, item ->
-                        NavigationDrawerItem(
+                        NavItem(
                             selected = selectedIndex == index,
                             onClick = { selectedIndex = index },
-                            colors = NavigationDrawerItemDefaults.colors(
-                                focusedContainerColor = Color.White.copy(ALPHA0_1F),
-                                focusedContentColor = Emerald,
-                                selectedContainerColor = Color.Transparent,
-                                selectedContentColor = Emerald
+                            icon = item.second,
+                            text = item.first
+                        )
 
-                            ),
-                            leadingContent = {
-                                Icon(
-                                    imageVector = item.second,
-                                    contentDescription = item.first,
-                                )
-                            }
-                        ) {
-                            Text(
-                                text = item.first,
-
-                            )
-                        }
                     }
                 }
             }
@@ -93,7 +80,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(24.dp)
+
             ) {
                 when (selectedIndex) {
                     TV_SECTION -> ChannelDashboard(
