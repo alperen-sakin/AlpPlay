@@ -40,13 +40,11 @@ object M3uParser {
     }
 
     private fun extractCategory(line: String): String {
-
         val category = Regex("group-title=\"(.*?)\"").find(line)?.groupValues?.get(1)
         return category ?: "Other"
     }
 
     private fun extractLogo(line: String): String {
-
         return Regex("tvg-logo=\"(.*?)\"").find(line)?.groupValues?.get(1) ?: ""
     }
 }

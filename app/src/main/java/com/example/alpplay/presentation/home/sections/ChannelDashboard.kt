@@ -37,8 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Card
 import androidx.tv.material3.Text
+import com.example.alpplay.domain.model.Channel
 import com.example.alpplay.presentation.home.viewModel.HomeState
 import com.example.alpplay.ui.theme.Emerald
+
+private const val GRID_SIZE = 4
 
 @Composable
 fun ChannelDashboard(
@@ -47,8 +50,6 @@ fun ChannelDashboard(
     onCategoryFocused: (String) -> Unit,
     onChannelClick: (String) -> Unit,
 ) {
-
-
     var activeCategoryIndex by remember { mutableIntStateOf(0) }
     var isGridFocused by remember { mutableStateOf(false) }
     val categoriesFocusRequester = remember { FocusRequester() }
@@ -85,7 +86,6 @@ fun ChannelDashboard(
                             .padding(end = 16.dp)
                             .clip(RoundedCornerShape(8.dp))
                             .background(if (isFocused) Color.White.copy(alpha = 0.2f) else Color.Transparent)
-
                             .onFocusChanged {
                                 if (it.isFocused) {
                                     activeCategoryIndex = index
@@ -101,17 +101,15 @@ fun ChannelDashboard(
                         )
                     }
                 }
-
             }
         }
 
-
         LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
+            columns = GridCells.Fixed(GRID_SIZE),
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .onFocusChanged{
+                .onFocusChanged {
                     isGridFocused = it.hasFocus
                 },
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -119,27 +117,36 @@ fun ChannelDashboard(
         ) {
             items(state.channels.size) { index ->
                 val channel = state.channels[index]
-                Card(
-                    onClick = { onChannelClick(channel.streamUrl) },
-                    modifier = Modifier
-                        .aspectRatio(16f / 9f)
-                        .border(
-                            width = 1.dp,
-                            color = Color.White.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White.copy(alpha = 0.05f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = channel.name, color = Color.White)
-                    }
-                }
+                ChannelCard(onChannelClick, channel)
             }
         }
     }
+}
 
+private const val RATIO = 16f / 9f
+
+@Composable
+private fun ChannelCard(
+    onChannelClick: (String) -> Unit,
+    channel: Channel
+) {
+    Card(
+        onClick = { onChannelClick(channel.streamUrl) },
+        modifier = Modifier
+            .aspectRatio(RATIO)
+            .border(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(12.dp)
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White.copy(alpha = 0.05f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = channel.name, color = Color.White)
+        }
+    }
 }

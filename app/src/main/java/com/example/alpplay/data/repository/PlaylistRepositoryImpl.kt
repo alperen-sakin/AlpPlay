@@ -16,14 +16,14 @@ class PlaylistRepositoryImpl @Inject constructor(
     private val playlistDao: PlaylistDao,
     private val channelDao: ChannelDao,
     private val api: PlaylistApi
-    ): PlaylistRepository {
+) : PlaylistRepository {
     override suspend fun addPlaylist(playlist: Playlist) {
         playlistDao.insertPlaylist(playlist.toEntity())
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
-       return playlistDao.getAllPlaylists().map{ entities ->
-            entities.map{it.toDomain()}
+        return playlistDao.getAllPlaylists().map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 
@@ -50,5 +50,4 @@ class PlaylistRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
-
 }

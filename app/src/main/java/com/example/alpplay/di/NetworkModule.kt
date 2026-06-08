@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlin.jvm.java
 
+private const val TIME_OUT = 30L
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -19,8 +21,8 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+            .readTimeout(TIME_OUT, TimeUnit.SECONDS)
             .build()
     }
 

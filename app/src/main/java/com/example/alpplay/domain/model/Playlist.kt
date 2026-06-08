@@ -6,4 +6,3 @@ data class Playlist(
     val url: String,
     val addedAt: Long = System.currentTimeMillis()
 )
-

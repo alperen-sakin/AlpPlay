@@ -9,4 +9,4 @@ data class HomeState(
     val channels: List<Channel> = emptyList(),
     val isLoading: Boolean = false,
 
-    )
+)

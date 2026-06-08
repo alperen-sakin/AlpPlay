@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
@@ -83,13 +82,16 @@ fun AddLinkScreen(
                 onPlayListNameChange = viewModel::onPlayListNameChange,
                 onM3UUrlChange = viewModel::m3uUrlChange,
                 onCancelClicked = viewModel::onCancelClicked,
-                onAddClicked = { viewModel.onAddClicked(onSuccess = {
-                    navController.navigate("main")
-                },
-                    onError = {error ->
-                        Toast.makeText(context, "Hata: $error", Toast.LENGTH_LONG).show()
-
-                    })}
+                onAddClicked = {
+                    viewModel.onAddClicked(
+                        onSuccess = {
+                            navController.navigate("main")
+                        },
+                        onError = { error ->
+                            Toast.makeText(context, "Hata: $error", Toast.LENGTH_LONG).show()
+                        }
+                    )
+                }
             ),
             state = AddPlayListState(
                 playListName = state.playListName,

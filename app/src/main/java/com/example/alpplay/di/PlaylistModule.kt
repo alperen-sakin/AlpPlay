@@ -20,12 +20,11 @@ object PlaylistModule {
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDataBase {
         return Room.databaseBuilder(
-                context,
-                AppDataBase::class.java,
-                "alpplay_database"
-            ).fallbackToDestructiveMigration(false)
+            context,
+            AppDataBase::class.java,
+            "alpplay_database"
+        ).fallbackToDestructiveMigration(false)
             .build()
-
     }
 
     @Provides
@@ -39,6 +38,4 @@ object PlaylistModule {
     fun provideChannelDao(database: AppDataBase): ChannelDao {
         return database.channelDao
     }
-
-
 }

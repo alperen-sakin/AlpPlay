@@ -1,24 +1,17 @@
 package com.example.alpplay.presentation
 
-import android.media.browse.MediaBrowser
-import android.net.Uri
-import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-
+import androidx.core.net.toUri
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.interfaces.IMedia
 import org.videolan.libvlc.util.VLCVideoLayout
-import androidx.core.net.toUri
-
 
 @Composable
 fun PlayerScreen(url: String) {
@@ -57,7 +50,6 @@ fun PlayerScreen(url: String) {
 //            }
 //        }
 //    }
-
 
     DisposableEffect(Unit) {
         val media = Media(libVLC, url.toUri())
