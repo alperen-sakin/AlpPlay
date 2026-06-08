@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     // ExoPlayer (Media3)
     implementation(libs.androidx.media3.exoplayer)
@@ -75,6 +76,11 @@ dependencies {
     implementation(libs.retrofit.scalars)
 
     implementation(libs.coil.compose)
+
+    //room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
 
 }

@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
@@ -44,6 +46,7 @@ import com.example.alpplay.ui.theme.TitleText
 @Composable
 fun AddLinkScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: AddPlayListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -77,7 +80,9 @@ fun AddLinkScreen(
                 onPlayListNameChange = viewModel::onPlayListNameChange,
                 onM3UUrlChange = viewModel::m3uUrlChange,
                 onCancelClicked = viewModel::onCancelClicked,
-                onAddClicked = { /*TODO*/ }
+                onAddClicked = { viewModel.onAddClicked(onSuccess = {
+                    navController.navigate("main")
+                }) }
             ),
             state = AddPlayListState(
                 playListName = state.playListName,

@@ -13,7 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.tv.material3.Text
+import com.example.alpplay.presentation.MainActivity
 import com.example.alpplay.presentation.addLinkScreen.AddLinkScreen
+import com.example.alpplay.presentation.home.HomeScreen
 import com.example.alpplay.ui.theme.Mirage
 import com.example.alpplay.ui.theme.TitleText
 
@@ -38,14 +40,14 @@ fun AppNavigation(
 
         AppState.GoToAddPlaylist -> {
             NavHost(navController = navController, startDestination = "add_link") {
-                composable("add_link") { AddLinkScreen() }
-                composable("main") { }
+                composable("add_link") { AddLinkScreen(navController = navController) }
+                composable("main") { HomeScreen() }
             }
         }
         AppState.GoToMainScreen -> {
             NavHost(navController = navController, startDestination = "main") {
-                composable("add_link") { AddLinkScreen() }
-                composable("main") { }
+                composable("add_link") { AddLinkScreen(navController = navController) }
+                composable("main") { HomeScreen() }
             }
         }
     }
