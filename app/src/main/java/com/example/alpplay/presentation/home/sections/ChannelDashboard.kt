@@ -1,5 +1,9 @@
 package com.example.alpplay.presentation.home.sections
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
@@ -12,79 +16,111 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Card
 import androidx.tv.material3.Text
+import com.example.alpplay.presentation.home.viewModel.HomeState
 import com.example.alpplay.ui.theme.Emerald
 
 @Composable
-fun ChannelDashboard(modifier: Modifier = Modifier) {
+fun ChannelDashboard(
+    modifier: Modifier = Modifier,
+    state: HomeState,
+    onCategoryFocused: (String) -> Unit,
+    onChannelClick: (String) -> Unit,
+) {
 
-    val categories = listOf("Sweden", "Turkey")
-    val dummyChannels = List(24) { "kanal ${it + 1}" }
 
-    var focusCategoryIndex by remember { mutableStateOf(0) }
+    var activeCategoryIndex by remember { mutableIntStateOf(0) }
+    var isGridFocused by remember { mutableStateOf(false) }
+    val categoriesFocusRequester = remember { FocusRequester() }
+
+    BackHandler(enabled = isGridFocused) {
+        isGridFocused = false
+        categoriesFocusRequester.requestFocus()
+    }
 
     Row(
         modifier = modifier
             .fillMaxSize()
             .padding(top = 24.dp, bottom = 24.dp, end = 24.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = spacedBy(12.dp)
+        AnimatedVisibility(
+            visible = !isGridFocused,
+            enter = expandHorizontally(),
+            exit = shrinkHorizontally()
         ) {
-            items(categories.size) { index ->
-                val isFocused = focusCategoryIndex == index
+            LazyColumn(
+                modifier = Modifier
+                    .width(240.dp)
+                    .fillMaxHeight()
+                    .focusRequester(categoriesFocusRequester),
+                verticalArrangement = spacedBy(12.dp)
+            ) {
+                items(state.tvCategories.size) { index ->
+                    val category = state.tvCategories[index]
+                    val isFocused = activeCategoryIndex == index
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (isFocused) Color.White.copy(alpha = 0.2f) else Color.Transparent)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 16.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isFocused) Color.White.copy(alpha = 0.2f) else Color.Transparent)
 
-                        .onFocusChanged { if (it.isFocused) focusCategoryIndex = index }
-                        .focusable()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = categories[index],
-                        color = if (isFocused) Emerald else Color.White.copy(alpha = 0.7f)
-                    )
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    activeCategoryIndex = index
+                                    onCategoryFocused(category)
+                                }
+                            }
+                            .focusable()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = category,
+                            color = if (isFocused) Emerald else Color.White.copy(alpha = 0.7f)
+                        )
+                    }
                 }
-            }
 
+            }
         }
+
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             modifier = Modifier
-                .weight(3f)
-                .fillMaxHeight(),
+                .weight(1f)
+                .fillMaxHeight()
+                .onFocusChanged{
+                    isGridFocused = it.hasFocus
+                },
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(dummyChannels.size) { index ->
+            items(state.channels.size) { index ->
+                val channel = state.channels[index]
                 Card(
-                    onClick = { },
+                    onClick = { onChannelClick(channel.streamUrl) },
                     modifier = Modifier
                         .aspectRatio(16f / 9f)
                         .border(
@@ -99,7 +135,7 @@ fun ChannelDashboard(modifier: Modifier = Modifier) {
                             .background(Color.White.copy(alpha = 0.05f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = dummyChannels[index], color = Color.White)
+                        Text(text = channel.name, color = Color.White)
                     }
                 }
             }

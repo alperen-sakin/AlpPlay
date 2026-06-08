@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Icon
 import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.NavigationDrawerItem
@@ -24,13 +26,20 @@ import androidx.tv.material3.NavigationDrawerItemDefaults
 import androidx.tv.material3.Text
 import com.example.alpplay.presentation.home.constant.MenuItems
 import com.example.alpplay.presentation.home.sections.ChannelDashboard
+import com.example.alpplay.presentation.home.viewModel.HomeState
+import com.example.alpplay.presentation.home.viewModel.HomeViewModel
 import com.example.alpplay.ui.theme.BusinessNavy
 import com.example.alpplay.ui.theme.Emerald
 import com.example.alpplay.ui.theme.Mirage
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     var selectedIndex by remember { mutableStateOf(0) }
+    val state by viewModel.state.collectAsState()
+
 
     Box(
         modifier = modifier
@@ -50,7 +59,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     MenuItems.forEachIndexed { index, item ->
                         NavigationDrawerItem(
                             selected = selectedIndex == index,
-                            onClick = { selectedIndex = index},
+                            onClick = { selectedIndex = index },
                             colors = NavigationDrawerItemDefaults.colors(
                                 focusedContainerColor = Color.White.copy(0.1f),
                                 focusedContentColor = Emerald,
@@ -68,7 +77,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             Text(
                                 text = item.first,
 
-                            )
+                                )
                         }
                     }
                 }
@@ -78,9 +87,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(24.dp)
-            ){
-                when(selectedIndex){
-                    0 -> ChannelDashboard()
+            ) {
+                when (selectedIndex) {
+                    0 -> ChannelDashboard(
+                        state = state,
+                        onCategoryFocused = {category -> viewModel.onCategorySelected(category)},
+                        onChannelClick = {}
+
+                    )
                     1 -> Text(text = "Movies", color = Color.White)
                     2 -> Text(text = "Series", color = Color.White)
                     3 -> Text(text = "Settings", color = Color.White)
