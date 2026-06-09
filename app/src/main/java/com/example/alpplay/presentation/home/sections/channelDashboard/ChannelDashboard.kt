@@ -113,6 +113,7 @@ fun ChannelDashboard(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .padding(top = 16.dp)
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)

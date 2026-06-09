@@ -49,6 +49,14 @@ fun PlayerScreen(
     var isOverlayVisible by remember { mutableStateOf(true) }
     var isPlaying by remember { mutableStateOf(true) }
     val focusRequester = remember { FocusRequester() }
+    
+    // Oynatılan kanalı takip etmek için state kullanıyoruz.
+    // Başlangıçta gelen url ile başlatıyoruz.
+    var currentUrl by remember(url) { mutableStateOf(url) }
+    
+    val currentChannel = remember(currentUrl, channels) {
+        channels.find { it.streamUrl == currentUrl }
+    }
 
     val exoPlayer = remember {
         val renderersFactory = DefaultRenderersFactory(context)
@@ -70,8 +78,8 @@ fun PlayerScreen(
             }
     }
 
-    LaunchedEffect(url) {
-        exoPlayer.setMediaItem(MediaItem.fromUri(url))
+    LaunchedEffect(currentUrl) {
+        exoPlayer.setMediaItem(MediaItem.fromUri(currentUrl))
         exoPlayer.prepare()
         exoPlayer.play()
         isPlaying = true
@@ -107,10 +115,20 @@ fun PlayerScreen(
                             true
                         }
                         Key.DirectionUp -> {
+                            // Bir sonraki kanala geçiş
+                            val currentIndex = channels.indexOf(currentChannel)
+                            if (currentIndex != -1 && currentIndex < channels.size - 1) {
+                                currentUrl = channels[currentIndex + 1].streamUrl
+                            }
                             onNextChannel()
                             true
                         }
                         Key.DirectionDown -> {
+                            // Bir önceki kanala geçiş
+                            val currentIndex = channels.indexOf(currentChannel)
+                            if (currentIndex > 0) {
+                                currentUrl = channels[currentIndex - 1].streamUrl
+                            }
                             onPreviousChannel()
                             true
                         }
@@ -147,26 +165,23 @@ fun PlayerScreen(
         PlayerControlsOverlay(
             isVisible = isOverlayVisible,
             isPlaying = isPlaying,
-            channelName = channelName,
-            channelCategory = channelCategory
+            channelName = currentChannel?.name ?: channelName,
+            channelCategory = currentChannel?.category ?: channelCategory
         )
 
         PlayListSideDrawer(
+            currentChannel = currentChannel,
             isVisible = isDrawerVisible,
             channels = channels,
             onChannelSelected = { selected ->
-                exoPlayer.setMediaItem(MediaItem.fromUri(selected.streamUrl))
-                exoPlayer.prepare()
-                exoPlayer.play()
-                isPlaying = true
-
+                currentUrl = selected.streamUrl
                 isDrawerVisible = false
                 focusRequester.requestFocus()
             },
             onBack = {
                 isDrawerVisible = false
                 focusRequester.requestFocus()
-            }
+            },
         )
     }
 }
