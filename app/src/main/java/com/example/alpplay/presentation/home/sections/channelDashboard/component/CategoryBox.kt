@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Border
@@ -98,14 +97,4 @@ fun CategoryBox(
         }
     }
 
-}
-
-
-@Preview
-@Composable
-private fun co() {
-//    CountyTabBox(
-//        isFocused = true,
-//        category = "TV"
-//    )
 }

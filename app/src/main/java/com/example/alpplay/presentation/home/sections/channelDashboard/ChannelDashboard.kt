@@ -44,6 +44,7 @@ import com.example.alpplay.domain.model.Channel
 import com.example.alpplay.presentation.home.sections.channelDashboard.component.CategoryBox
 import com.example.alpplay.presentation.home.viewModel.HomeState
 import com.example.alpplay.ui.theme.ChosenBlue
+import kotlinx.coroutines.delay
 
 private const val GRID_SIZE = 4
 
@@ -58,6 +59,7 @@ fun ChannelDashboard(
     var isGridFocused by remember { mutableStateOf(false) }
     val categoriesFocusRequester = remember { FocusRequester() }
     val gridFocusRequester = remember { FocusRequester() }
+    var isInitialLaunch by remember { mutableStateOf(true) }
 
     BackHandler(enabled = isGridFocused) {
         isGridFocused = false
@@ -80,7 +82,7 @@ fun ChannelDashboard(
                     .background(ChosenBlue.copy(alpha = 0.5f)),
                 verticalArrangement = spacedBy(12.dp, Alignment.CenterVertically),
 
-            ) {
+                ) {
                 items(state.tvCategories.size) { index ->
                     val category = state.tvCategories[index]
                     val isSelected = activeCategoryIndex == index
@@ -111,7 +113,7 @@ fun ChannelDashboard(
                 .weight(1f)
                 .fillMaxHeight()
                 .onFocusChanged { focusState ->
-                    if (focusState.hasFocus && !isGridFocused) {
+                    if (focusState.hasFocus && !isGridFocused && !isInitialLaunch) {
                         isGridFocused = true
                     }
                 },
@@ -124,7 +126,6 @@ fun ChannelDashboard(
                     modifier = Modifier
                         .then(if (index == 0) Modifier.focusRequester(gridFocusRequester) else Modifier)
                         .onKeyEvent { keyEvent ->
-                            // Eğer en sol sütundaysak (index % GRID_SIZE == 0) ve sol tuşa basıldıysa
                             if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.DirectionLeft) {
                                 if (index % GRID_SIZE == 0) {
                                     isGridFocused = false
@@ -133,20 +134,36 @@ fun ChannelDashboard(
                             }
                             false
                         },
-                    onChannelClick = onChannelClick, 
+                    onChannelClick = onChannelClick,
                     channel = channel
                 )
             }
         }
     }
 
-    LaunchedEffect(isGridFocused) {
-        if (isGridFocused) {
-            gridFocusRequester.requestFocus()
-        } else {
+    LaunchedEffect(Unit) {
+        delay(300)
+
+        try {
             categoriesFocusRequester.requestFocus()
+        } catch (e: Exception) {
+        }
+        isInitialLaunch = false
+    }
+
+    LaunchedEffect(isGridFocused) {
+        if (!isInitialLaunch) {
+            try {
+                if (isGridFocused) {
+                    gridFocusRequester.requestFocus()
+                } else {
+                    categoriesFocusRequester.requestFocus()
+                }
+            } catch (e: Exception) {}
         }
     }
+
+
 }
 
 private const val RATIO = 16f / 9f
