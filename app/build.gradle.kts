@@ -9,18 +9,15 @@ plugins {
 
 android {
     namespace = "com.example.alpplay"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.alpplay"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        multiDexEnabled = true
+
 
     }
 
@@ -80,8 +77,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
-    implementation("org.videolan.android:libvlc-all:3.7.2")
-
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.exoplayer.hls)
 }
 detekt {
     buildUponDefaultConfig = true

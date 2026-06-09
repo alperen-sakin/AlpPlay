@@ -39,15 +39,9 @@ fun AppNavigation(
             }
         }
 
-        AppState.GoToAddPlaylist -> {
-            NavHost(navController = navController, startDestination = "add_link") {
-                composable("add_link") { AddLinkScreen(navController = navController) }
-                composable("main") { HomeScreen(navController = navController) }
-            }
-        }
-
-        AppState.GoToMainScreen -> {
-            NavHost(navController = navController, startDestination = "main") {
+        else -> {
+            val startDestination = if (appState == AppState.GoToAddPlaylist) "add_link" else "main"
+            NavHost(navController = navController, startDestination = startDestination) {
                 composable("add_link") { AddLinkScreen(navController = navController) }
                 composable("main") { HomeScreen(navController = navController) }
                 composable("player") {

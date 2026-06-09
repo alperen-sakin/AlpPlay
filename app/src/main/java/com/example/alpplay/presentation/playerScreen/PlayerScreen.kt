@@ -1,5 +1,6 @@
 package com.example.alpplay.presentation.playerScreen
 
+import androidx.annotation.OptIn
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,16 +21,18 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.example.alpplay.domain.model.Channel
-import org.videolan.libvlc.LibVLC
-import org.videolan.libvlc.Media
-import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.util.VLCVideoLayout
 
+@OptIn(UnstableApi::class)
 @Composable
 fun PlayerScreen(
     url: String,
@@ -47,28 +50,45 @@ fun PlayerScreen(
     var isPlaying by remember { mutableStateOf(true) }
     val focusRequester = remember { FocusRequester() }
 
-    val libVLC = remember { LibVLC(context, arrayListOf("-vvv", "--network-caching=5000")) }
-    val mediaPlayer = remember { MediaPlayer(libVLC) }
+    val exoPlayer = remember {
+        val renderersFactory = DefaultRenderersFactory(context)
+            .setEnableDecoderFallback(true)
+
+        val loadControl = DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                32000,
+                64000,
+                2500,
+                5000
+            ).build()
+
+        ExoPlayer.Builder(context)
+            .setRenderersFactory(renderersFactory)
+            .setLoadControl(loadControl)
+            .build().apply {
+                playWhenReady = true
+            }
+    }
 
     LaunchedEffect(url) {
-        val media = Media(libVLC, url.toUri()).apply { setHWDecoderEnabled(false, false) }
-        mediaPlayer.media = media
-        media.release()
-        mediaPlayer.play()
+        exoPlayer.setMediaItem(MediaItem.fromUri(url))
+        exoPlayer.prepare()
+        exoPlayer.play()
+        isPlaying = true
     }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_STOP) {
-                mediaPlayer.stop()
-                mediaPlayer.detachViews()
+            when (event) {
+                Lifecycle.Event.ON_STOP -> exoPlayer.pause()
+                Lifecycle.Event.ON_START -> if (isPlaying) exoPlayer.play()
+                else -> {}
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-            mediaPlayer.release()
-            libVLC.release()
+            exoPlayer.release()
         }
     }
 
@@ -96,9 +116,11 @@ fun PlayerScreen(
                         }
                         Key.DirectionCenter, Key.Enter -> {
                             if (isOverlayVisible) {
-                                if (isPlaying) mediaPlayer.pause() else mediaPlayer.play()
+                                if (isPlaying) exoPlayer.pause() else exoPlayer.play()
                                 isPlaying = !isPlaying
-                            } else { isOverlayVisible = true }
+                            } else {
+                                isOverlayVisible = true
+                            }
                             true
                         }
                         else -> false
@@ -111,9 +133,15 @@ fun PlayerScreen(
         LaunchedEffect(isDrawerVisible) {
             if (isDrawerVisible) isOverlayVisible = false
         }
+
         AndroidView(
             modifier = Modifier.fillMaxSize(),
-            factory = { ctx -> VLCVideoLayout(ctx).apply { mediaPlayer.attachViews(this, null, false, false) } }
+            factory = { ctx ->
+                PlayerView(ctx).apply {
+                    player = exoPlayer
+                    useController = false
+                }
+            }
         )
 
         PlayerControlsOverlay(
@@ -127,10 +155,10 @@ fun PlayerScreen(
             isVisible = isDrawerVisible,
             channels = channels,
             onChannelSelected = { selected ->
-                val newMedia = Media(libVLC, selected.streamUrl.toUri()).apply { setHWDecoderEnabled(false, false) }
-                mediaPlayer.stop()
-                mediaPlayer.media = newMedia
-                mediaPlayer.play()
+                exoPlayer.setMediaItem(MediaItem.fromUri(selected.streamUrl))
+                exoPlayer.prepare()
+                exoPlayer.play()
+                isPlaying = true
 
                 isDrawerVisible = false
                 focusRequester.requestFocus()
