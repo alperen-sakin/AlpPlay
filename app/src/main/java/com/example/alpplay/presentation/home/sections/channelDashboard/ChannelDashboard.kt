@@ -1,5 +1,6 @@
 package com.example.alpplay.presentation.home.sections.channelDashboard
 
+import android.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandHorizontally
@@ -8,9 +9,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,6 +47,7 @@ import com.example.alpplay.presentation.home.sections.channelDashboard.component
 import com.example.alpplay.presentation.home.sections.channelDashboard.component.ChannelCard
 import com.example.alpplay.presentation.home.viewModel.HomeState
 import com.example.alpplay.ui.theme.ChosenBlue
+import com.example.alpplay.ui.theme.Turquoise
 import kotlinx.coroutines.delay
 
 private const val GRID_SIZE = 4
@@ -104,13 +110,20 @@ fun ChannelDashboard(
             }
         }
 
-        Column {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            val currentCategoryName = state.tvCategories.getOrNull(activeCategoryIndex) ?: "Category"
             Text(
-                text = "Category",
+                text = currentCategoryName,
                 color = Color.White,
                 modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp)
             )
+            Spacer(modifier = Modifier.height(1.dp).background(color=Turquoise.copy(0.5f)).fillMaxWidth())
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(GRID_SIZE),
@@ -122,6 +135,7 @@ fun ChannelDashboard(
                             isGridFocused = true
                         }
                     },
+                contentPadding = PaddingValues(top = 24.dp, bottom = 24.dp, start = 8.dp, end = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

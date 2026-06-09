@@ -105,6 +105,7 @@ fun ChannelCard(
                     text = channel.name,
                     color = Color.White,
                     fontSize = 18.sp,
+                    maxLines = 1
 
                     )
                 Spacer(modifier = Modifier.height(4.dp))
